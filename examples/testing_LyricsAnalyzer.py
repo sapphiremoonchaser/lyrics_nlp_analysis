@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from src.lana_nlp.scripts.data_loader import LyricsDataLoader
+from lana_nlp.pipeline.data_loader import LyricsDataLoader
 from src.lana_nlp.scripts.lyrics_analyzer import LyricsAnalyzer
-from src.lana_nlp.scripts.text_cleaner import TextCleaner
+from lana_nlp.pipeline.text_cleaner import TextCleaner
 
 # Load the lyrics csv
 loader = LyricsDataLoader(
@@ -39,5 +39,9 @@ songs_by_album = analyzer.number_of_songs_by_album()
 
 # Song length stats
 song_length_stats = analyzer.song_length_stats()
+
+songs_by_album = analyzer.songs_by_album("Norman Fucking Rockwell!")
+
+longest_songs = analyzer.longest_songs()
 
 x = 1

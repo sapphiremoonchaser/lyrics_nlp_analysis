@@ -8,9 +8,15 @@ dependencies =[
     "nltk",
     "numpy",
     "pandas",
+    "plotly",
+    "pyarrow",
     "seaborn",
     "scikit-learn",
-    "wordcloud"
+    "streamlit",
+    "textblob",
+    "textstat",
+    "wordcloud",
+    "vadersentiment"
 ]
 
 [pyproject.optional-dependencies]
