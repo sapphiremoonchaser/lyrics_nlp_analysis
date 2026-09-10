@@ -36,7 +36,7 @@ from lyrics_nlp.dashboard.visualizations.emotions import (
 
 st.set_page_config(
     page_title="NLP Lyric Analysis",
-    page_icon="♫",
+    page_icon="🎵",
     layout="wide"
 )
 
@@ -57,7 +57,7 @@ album_df: pd.DataFrame = pd.read_csv(
 # Sidebar
 # --------------------
 
-st.sidebar.title("Lana Del Rey")
+st.sidebar.title("Lyric Analysis")
 
 page = st.sidebar.radio(
     "Navigate",
@@ -74,10 +74,10 @@ page = st.sidebar.radio(
 # --------------------
 
 if page == "Overview":
-    st.title("Lana Del Rey Lyric Analysis")
+    st.title("NLP Lyric Analysis")
 
     st.write(
-        "An exploration of Lana Del Rey's lyrics "
+        "An exploration of lyrics "
         "using natural language processing."
     )
 
@@ -106,7 +106,7 @@ if page == "Overview":
     st.plotly_chart(fig, use_container_width=True)
 
     st.caption(
-        "Average number of words per song across Lana Del Rey's albums."
+        "Average number of words per song across albums."
     )
 
     # Emotional Profile Heatmap
@@ -123,7 +123,7 @@ elif page == "Lyrical Style":
     st.title("Lyrical Style Over Time")
 
     st.write(
-        "How does Lana Del Rey's lyrical style change "
+        "How does lyrical style change "
         "across her discography?"
     )
 
@@ -260,7 +260,7 @@ elif page == "Album Comparison":
     st.title("Album Comparison")
 
     st.write(
-        "Compare lyrical characteristics across Lana Del Rey's Albums."
+        "Compare lyrical characteristics across albums."
     )
 
     st.subheader("Select Albums to Compare")
@@ -604,13 +604,16 @@ elif page == "Song Explorer":
             selected_song
         )
 
-        # Look up album song belongs to for word cloud color palette
-        song_album = song_df.loc[
+        # Look up artist and album for word cloud color palette
+        song_info = song_df.loc[
             song_df["song"] == selected_song,
-            "album"
+            ["artist", "album"]
         ].iloc[0]
 
-        song_palette = album_palettes[song_album]
+        song_artist = song_info["artist"]
+        song_album = song_info["album"]
+
+        song_palette = album_palettes[song_artist][song_album]
 
         song_wordcloud = create_wordcloud(
             song_text,
