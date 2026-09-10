@@ -8,7 +8,7 @@ from pathlib import Path
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-from lana_nlp.utils.text_utils import (
+from lyrics_nlp.utils.text_utils import (
     to_text,
     to_tokens
 )

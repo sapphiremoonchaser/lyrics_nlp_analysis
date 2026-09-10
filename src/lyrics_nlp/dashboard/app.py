@@ -5,9 +5,9 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 
-from lana_nlp.dashboard.visualizations.color_palettes import album_palettes
+from lyrics_nlp.dashboard.visualizations.color_palettes import album_palettes
 
-from lana_nlp.dashboard.visualizations.preparation import (
+from lyrics_nlp.dashboard.visualizations.preparation import (
     metric_groups,
     EMOTION_ORDER,
     prepare_structural_comparison,
@@ -17,18 +17,18 @@ from lana_nlp.dashboard.visualizations.preparation import (
     prepare_wordcloud_text
 )
 
-from lana_nlp.dashboard.visualizations.comparisons import (
+from lyrics_nlp.dashboard.visualizations.comparisons import (
     create_album_boxplot,
     create_wordcloud
 )
 
-from lana_nlp.dashboard.visualizations.trends import (
+from lyrics_nlp.dashboard.visualizations.trends import (
     average_words_over_time_scatterplot,
     create_metrics_scatter,
     create_sentiment_scatter
 )
 
-from lana_nlp.dashboard.visualizations.emotions import (
+from lyrics_nlp.dashboard.visualizations.emotions import (
     album_emotion_heatmap,
     create_emotion_heatmap,
     create_emotion_bar_chart
