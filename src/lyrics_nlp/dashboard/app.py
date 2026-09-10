@@ -35,8 +35,8 @@ from lyrics_nlp.dashboard.visualizations.emotions import (
 )
 
 st.set_page_config(
-    page_title="Lana Del Rey Lyric Analysis",
-    page_icon="🍒",
+    page_title="NLP Lyric Analysis",
+    page_icon="♫",
     layout="wide"
 )
 
