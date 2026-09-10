@@ -1,6 +1,6 @@
 """
 LyricsDataLoader does the following:
-    - reads the csv
+    - reads the csv files ending with "_lyrics.csv"
     - verifies required columns exist
     - stores the dataframe
     - returns a copy of the dataframe
@@ -33,15 +33,36 @@ class LyricsDataLoader:
 
     def load(self):
         """
-        Load the lyrics data from a csv file.
+        Load all *_lyrics.csv files from the raw folder.
         """
-        df = pd.read_csv(self.filepath)
+        files = sorted(
+            self.filepath.glob("*_lyrics.csv")
+        )
 
-        missing = REQUIRED_COLUMNS - set(df.columns)
-        if missing:
-            raise ValueError(f"Missing columns: {missing}")
+        if not files:
+            raise FileNotFoundError(
+                f"No *_lyrics.csv files found in {self.filepath}"
+            )
 
-        self.df = df
+        dataframes = []
+
+        for filepath in files:
+            df = pd.read_csv(filepath)
+
+            missing = REQUIRED_COLUMNS - set(df.columns)
+
+            if missing:
+                raise ValueError(
+                    f"{filepath} is missing required columns: {missing}"
+                )
+
+            dataframes.append(df)
+
+        self.df = pd.concat(
+            dataframes,
+            ignore_index=True
+        )
+
         return self.df.copy()
 
 
