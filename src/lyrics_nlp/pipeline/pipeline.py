@@ -1,5 +1,5 @@
 """
-Create a pipeline to read a csv file containing lyrics, clean the data and analyze
+Create a pipeline to read csv files containing lyrics, clean the data and analyze
 the data.
 """
 import pandas as pd
@@ -16,7 +16,7 @@ def pipeline(
         filepath: str
 ) -> tuple[[pd.DataFrame], [pd.DataFrame]]:
     """
-    Pipeline to read a csv file containing lyrics, clean the data and analyze. It
+    Pipeline to read csv files containing lyrics, clean the data and analyze. It
     gets dataframes for basic stats, readability, vocabulary, and sentiment.
 
     Args:
