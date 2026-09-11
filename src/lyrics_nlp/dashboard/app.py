@@ -95,11 +95,19 @@ if page == "Overview":
         index=0
     )
 
+    selected_album_df = album_df[
+        album_df["artist"] == artist
+    ]
+
+    selected_song_df = song_df[
+        song_df["artist"] == artist
+    ]
+
     # KPI Cards
-    album_count = album_df["album"].nunique()
-    song_count = song_df["song"].nunique()
-    first_year = album_df["year"].min()
-    last_year = album_df["year"].max()
+    album_count = selected_album_df["album"].nunique()
+    song_count = selected_song_df["song"].nunique()
+    first_year = selected_album_df["year"].min()
+    last_year = selected_album_df["year"].max()
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -116,7 +124,7 @@ if page == "Overview":
         st.metric("Latest Album", last_year)
 
     # Scatter Plot
-    fig = average_words_over_time_scatterplot(album_df)
+    fig = average_words_over_time_scatterplot(selected_album_df)
     st.plotly_chart(fig, use_container_width=True)
 
     st.caption(
@@ -124,7 +132,7 @@ if page == "Overview":
     )
 
     # Emotional Profile Heatmap
-    fig = album_emotion_heatmap(album_df)
+    fig = album_emotion_heatmap(selected_album_df)
     st.plotly_chart(fig, use_container_width=True)
 
     st.caption(
