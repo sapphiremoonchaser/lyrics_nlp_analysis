@@ -305,6 +305,15 @@ elif page == "Album Comparison":
 
     st.subheader("Select Albums to Compare")
 
+    # Get unique artists
+    artist_names = (
+        album_df["artist"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+
     album_names = (
         album_df["album"]
         .dropna()
@@ -316,17 +325,51 @@ elif page == "Album Comparison":
     col1, col2 = st.columns(2)
 
     with col1:
+        artist_1 = st.selectbox(
+            "Artist 1",
+            artist_names,
+            index=0
+        )
+
+        album_names_1 = (
+            album_df.loc[
+                album_df["artist"] == artist_1,
+                "album"
+            ]
+            .dropna()
+            .astype(str)
+            .unique()
+            .tolist()
+        )
+
         album_1 = st.selectbox(
             "Album 1",
-            album_names,
-            index=1
+            album_names_1,
+            index=0
         )
 
     with col2:
+        artist_2 = st.selectbox(
+            "Artist 2",
+            artist_names,
+            index=1
+        )
+
+        album_names_2 = (
+            album_df.loc[
+                album_df["artist"] == artist_2,
+                "album"
+            ]
+            .dropna()
+            .astype(str)
+            .unique()
+            .tolist()
+        )
+
         album_2 = st.selectbox(
             "Album 2",
-            album_names,
-            index=4
+            album_names_2,
+            index=0
         )
 
     selected_group = st.selectbox(
@@ -335,13 +378,29 @@ elif page == "Album Comparison":
     )
 
     comparison_df = album_df[
-        album_df["album"].isin([album_1, album_2])
-    ].copy()
+        (
+                (album_df["artist"] == artist_1)
+                & (album_df["album"] == album_1)
+        )
+        |
+        (
+                (album_df["artist"] == artist_2)
+                & (album_df["album"] == album_2)
+        )
+        ].copy()
 
     # Song level df for box plots
     comparison_songs = song_df[
-        song_df["album"].isin([album_1, album_2])
-    ].copy()
+        (
+                (song_df["artist"] == artist_1)
+                & (song_df["album"] == album_1)
+        )
+        |
+        (
+                (song_df["artist"] == artist_2)
+                & (song_df["album"] == album_2)
+        )
+        ].copy()
 
     if selected_group == "Song Structure":
         # Table for structural comparison
@@ -542,20 +601,38 @@ elif page == "Song Explorer":
         "characteristics of individual songs."
     )
 
-    # Drop down to choose album
-    albums = sorted(
-        song_df["album"].dropna().unique()
+    # Artist selector
+    artists = sorted(
+        song_df["artist"]
+        .dropna()
+        .unique()
+    )
+
+    selected_artist = st.selectbox(
+        "Choose an artist.",
+        artists
+    )
+
+    # Album selector
+    artist_albums = sorted(
+        song_df.loc[
+            song_df["artist"] == selected_artist,
+            "album"
+        ]
+        .dropna()
+        .unique()
     )
 
     selected_album = st.selectbox(
         "Choose an album.",
-        albums
+        artist_albums
     )
 
-    # Drop down to select song
+    # Song selector
     album_songs = (
         song_df[
-            song_df["album"] == selected_album
+            (song_df["artist"] == selected_artist)
+            & (song_df["album"] == selected_album)
         ]
         .sort_values("song")
     )
@@ -615,12 +692,15 @@ elif page == "Song Explorer":
     )
 
     fig = create_emotion_bar_chart(emotion_data)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
 
+    # Lyrics and Word Cloud
     col1, col2 = st.columns(2)
 
     with col1:
-        # Add the lyrics
         st.subheader("Lyrics")
 
         st.text_area(
@@ -637,23 +717,17 @@ elif page == "Song Explorer":
             unsafe_allow_html=True
         )
 
-        # Filter song level dataframe
+        # Filter song-level dataframe
         song_text = prepare_wordcloud_text(
             song_df,
             "song",
             selected_song
         )
 
-        # Look up artist and album for word cloud color palette
-        song_info = song_df.loc[
-            song_df["song"] == selected_song,
-            ["artist", "album"]
-        ].iloc[0]
-
-        song_artist = song_info["artist"]
-        song_album = song_info["album"]
-
-        song_palette = album_palettes[song_artist][song_album]
+        # Use selected artist and album for palette
+        song_palette = album_palettes[
+            selected_artist
+        ][selected_album]
 
         song_wordcloud = create_wordcloud(
             song_text,
