@@ -81,6 +81,20 @@ if page == "Overview":
         "using natural language processing."
     )
 
+    artist_names = (
+        album_df["artist"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+
+    artist = st.selectbox(
+        "Artist",
+        artist_names,
+        index=1
+    )
+
     # KPI Cards
     album_count = album_df["album"].nunique()
     song_count = song_df["song"].nunique()
