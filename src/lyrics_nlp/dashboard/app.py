@@ -65,7 +65,8 @@ page = st.sidebar.radio(
         "Overview",
         "Lyrical Style",
         "Album Comparison",
-        "Song Explorer"
+        "Song Explorer",
+        "Artist Comparison"
     ]
 )
 
@@ -738,3 +739,12 @@ elif page == "Song Explorer":
             song_wordcloud.to_array(),
             use_container_width=True
         )
+
+
+elif page == "Artist Comparison":
+    st.title("Artist Comparison")
+
+    st.write(
+        "Compare lyrical characteristics and catalog size across artists."
+    )
+
