@@ -92,7 +92,7 @@ if page == "Overview":
     artist = st.selectbox(
         "Artist",
         artist_names,
-        index=1
+        index=0
     )
 
     # KPI Cards
