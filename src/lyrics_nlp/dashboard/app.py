@@ -149,6 +149,24 @@ elif page == "Lyrical Style":
         "across her discography?"
     )
 
+    artist_names = (
+        album_df["artist"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+
+    artist = st.selectbox(
+        "Artist",
+        artist_names,
+        index=0
+    )
+
+    selected_album_df = album_df[
+        album_df["artist"] == artist
+        ]
+
     selected_group = st.selectbox(
         "Metric Group",
         metric_groups.keys()
@@ -160,7 +178,7 @@ elif page == "Lyrical Style":
 
         with col1:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "avg_words_per_song",
                 "Average Words per Song",
                 "Words",
@@ -170,7 +188,7 @@ elif page == "Lyrical Style":
 
         with col2:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "avg_lines_per_song",
                 "Average Lines per Song",
                 "Lines",
@@ -179,7 +197,7 @@ elif page == "Lyrical Style":
             st.plotly_chart(fig, use_container_width=True)
 
         fig = create_metrics_scatter(
-            album_df,
+            selected_album_df,
             "avg_reading_time",
             "Average Reading Time per Song",
             "Minutes",
@@ -192,7 +210,7 @@ elif page == "Lyrical Style":
 
         with col1:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "vocabulary_size",
                 "Vocabulary Size",
                 "words",
@@ -205,7 +223,7 @@ elif page == "Lyrical Style":
 
         with col2:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "lexical_diversity",
                 "Lexical Diversity",
                 "score",
@@ -217,7 +235,7 @@ elif page == "Lyrical Style":
             )
 
         fig = create_metrics_scatter(
-            album_df,
+            selected_album_df,
             "average_word_length",
             "Word Length",
             "characters",
@@ -230,7 +248,7 @@ elif page == "Lyrical Style":
 
         with col1:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "flesch_reading_ease",
                 "Flesch Reading Ease",
                 "score",
@@ -244,7 +262,7 @@ elif page == "Lyrical Style":
 
         with col2:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "flesch_kincaid",
                 "Flesch-Kincaid",
                 "score",
@@ -256,7 +274,7 @@ elif page == "Lyrical Style":
             )
 
         fig = create_metrics_scatter(
-            album_df,
+            selected_album_df,
             "gunning_fog",
             "Gunning Fog",
             "score",
@@ -269,7 +287,7 @@ elif page == "Lyrical Style":
 
     if selected_group == "Sentiment and Emotion":
 
-        fig = create_sentiment_scatter(album_df)
+        fig = create_sentiment_scatter(selected_album_df)
         st.plotly_chart(fig, use_container_width=True)
         st.caption(
             "Larger values indicates positive language, with 0 being 0 positive "
