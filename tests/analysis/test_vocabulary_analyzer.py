@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from lana_nlp.features.vocabulary import VocabularyFeatures
+from lyrics_nlp.features.vocabulary import VocabularyFeatures
 
 
 def test_normalize_word_lowercases_and_removes_punctuation():

@@ -11,7 +11,7 @@ from textstat import textstat
 import pandas as pd
 from collections.abc import Callable
 
-from lana_nlp.utils.text_utils import to_text
+from lyrics_nlp.utils.text_utils import to_text
 
 
 class ReadabilityFeatures:

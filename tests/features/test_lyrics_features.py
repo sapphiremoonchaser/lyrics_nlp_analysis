@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from lana_nlp.features.basic_features import BasicFeatures
+from lyrics_nlp.features.basic_features import BasicFeatures
 
 
 def test_use_tokenized_text_returns_false_for_strings():

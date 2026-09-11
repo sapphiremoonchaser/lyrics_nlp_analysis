@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from lana_nlp.analysis.statistics import StatisticsAnalyzer
+from lyrics_nlp.analysis.statistics import StatisticsAnalyzer
 
 
 def test_total_word_count_structure_and_value() -> None:

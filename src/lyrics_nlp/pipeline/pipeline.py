@@ -1,22 +1,26 @@
 """
-Create a pipeline to read a csv file containing lyrics, clean the data and analyze
+Create a pipeline to read csv files containing lyrics, clean the data and analyze
 the data.
 """
 import pandas as pd
+from pathlib import Path
 
-from lana_nlp.features.basic_features import BasicFeatures
-from lana_nlp.pipeline.data_loader import LyricsDataLoader
-from lana_nlp.pipeline.text_cleaner import TextCleaner
-from lana_nlp.features.readability import ReadabilityFeatures
-from lana_nlp.features.sentiment import SentimentFeatures
-from lana_nlp.features.vocabulary import VocabularyFeatures
+from lyrics_nlp.features.basic_features import BasicFeatures
+from lyrics_nlp.pipeline.data_loader import LyricsDataLoader
+from lyrics_nlp.pipeline.text_cleaner import TextCleaner
+from lyrics_nlp.features.readability import ReadabilityFeatures
+from lyrics_nlp.features.sentiment import SentimentFeatures
+from lyrics_nlp.features.vocabulary import VocabularyFeatures
 
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+DATA_DIR = PROJECT_ROOT / "data"
+PROCESSED_DIR = DATA_DIR / "processed"
 
 def pipeline(
         filepath: str
 ) -> tuple[[pd.DataFrame], [pd.DataFrame]]:
     """
-    Pipeline to read a csv file containing lyrics, clean the data and analyze. It
+    Pipeline to read csv files containing lyrics, clean the data and analyze. It
     gets dataframes for basic stats, readability, vocabulary, and sentiment.
 
     Args:
@@ -70,7 +74,7 @@ def pipeline(
 
     # Save by song dataframe
     df.to_csv(
-        "../data/processed/song_level_stats.csv",
+        PROCESSED_DIR / "song_level_stats.csv",
         index=False
     )
 
@@ -82,13 +86,13 @@ def pipeline(
     ]
 
     emotion_stats = (
-        df.groupby(["album", "year"])[emotion_columns]
+        df.groupby(["artist", "album", "year"])[emotion_columns]
         .mean()
         .reset_index()
     )
 
     album_stats = (
-        df.groupby(["album", "year"])
+        df.groupby(["artist", "album", "year"])
         .agg(
             total_words=("word_count", "sum"),
             avg_words_per_song=("word_count", "mean"),
@@ -115,10 +119,13 @@ def pipeline(
     # Add emotion statistics
     album_stats = album_stats.merge(
         emotion_stats,
-        on=["album", "year"],
+        on=["artist", "album", "year"],
         how="left"
     )
 
-    album_stats.to_csv("../data/processed/album_level_stats.csv")
+    album_stats.to_csv(
+        PROCESSED_DIR / "album_level_stats.csv",
+        index=False
+    )
 
     return df, album_stats

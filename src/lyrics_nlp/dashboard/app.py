@@ -5,9 +5,9 @@ import streamlit as st
 import pandas as pd
 from pathlib import Path
 
-from lana_nlp.dashboard.visualizations.color_palettes import album_palettes
+from lyrics_nlp.dashboard.visualizations.color_palettes import album_palettes
 
-from lana_nlp.dashboard.visualizations.preparation import (
+from lyrics_nlp.dashboard.visualizations.preparation import (
     metric_groups,
     EMOTION_ORDER,
     prepare_structural_comparison,
@@ -17,26 +17,26 @@ from lana_nlp.dashboard.visualizations.preparation import (
     prepare_wordcloud_text
 )
 
-from lana_nlp.dashboard.visualizations.comparisons import (
+from lyrics_nlp.dashboard.visualizations.comparisons import (
     create_album_boxplot,
     create_wordcloud
 )
 
-from lana_nlp.dashboard.visualizations.trends import (
+from lyrics_nlp.dashboard.visualizations.trends import (
     average_words_over_time_scatterplot,
     create_metrics_scatter,
     create_sentiment_scatter
 )
 
-from lana_nlp.dashboard.visualizations.emotions import (
+from lyrics_nlp.dashboard.visualizations.emotions import (
     album_emotion_heatmap,
     create_emotion_heatmap,
     create_emotion_bar_chart
 )
 
 st.set_page_config(
-    page_title="Lana Del Rey Lyric Analysis",
-    page_icon="🍒",
+    page_title="NLP Lyric Analysis",
+    page_icon="🎵",
     layout="wide"
 )
 
@@ -57,7 +57,7 @@ album_df: pd.DataFrame = pd.read_csv(
 # Sidebar
 # --------------------
 
-st.sidebar.title("Lana Del Rey")
+st.sidebar.title("Lyric Analysis")
 
 page = st.sidebar.radio(
     "Navigate",
@@ -74,18 +74,40 @@ page = st.sidebar.radio(
 # --------------------
 
 if page == "Overview":
-    st.title("Lana Del Rey Lyric Analysis")
+    st.title("NLP Lyric Analysis")
 
     st.write(
-        "An exploration of Lana Del Rey's lyrics "
+        "An exploration of lyrics "
         "using natural language processing."
     )
 
+    artist_names = (
+        album_df["artist"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+
+    artist = st.selectbox(
+        "Artist",
+        artist_names,
+        index=0
+    )
+
+    selected_album_df = album_df[
+        album_df["artist"] == artist
+    ]
+
+    selected_song_df = song_df[
+        song_df["artist"] == artist
+    ]
+
     # KPI Cards
-    album_count = album_df["album"].nunique()
-    song_count = song_df["song"].nunique()
-    first_year = album_df["year"].min()
-    last_year = album_df["year"].max()
+    album_count = selected_album_df["album"].nunique()
+    song_count = selected_song_df["song"].nunique()
+    first_year = selected_album_df["year"].min()
+    last_year = selected_album_df["year"].max()
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -102,15 +124,15 @@ if page == "Overview":
         st.metric("Latest Album", last_year)
 
     # Scatter Plot
-    fig = average_words_over_time_scatterplot(album_df)
+    fig = average_words_over_time_scatterplot(selected_album_df)
     st.plotly_chart(fig, use_container_width=True)
 
     st.caption(
-        "Average number of words per song across Lana Del Rey's albums."
+        "Average number of words per song across albums."
     )
 
     # Emotional Profile Heatmap
-    fig = album_emotion_heatmap(album_df)
+    fig = album_emotion_heatmap(selected_album_df)
     st.plotly_chart(fig, use_container_width=True)
 
     st.caption(
@@ -123,9 +145,27 @@ elif page == "Lyrical Style":
     st.title("Lyrical Style Over Time")
 
     st.write(
-        "How does Lana Del Rey's lyrical style change "
+        "How does lyrical style change "
         "across her discography?"
     )
+
+    artist_names = (
+        album_df["artist"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+
+    artist = st.selectbox(
+        "Artist",
+        artist_names,
+        index=0
+    )
+
+    selected_album_df = album_df[
+        album_df["artist"] == artist
+        ]
 
     selected_group = st.selectbox(
         "Metric Group",
@@ -138,7 +178,7 @@ elif page == "Lyrical Style":
 
         with col1:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "avg_words_per_song",
                 "Average Words per Song",
                 "Words",
@@ -148,7 +188,7 @@ elif page == "Lyrical Style":
 
         with col2:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "avg_lines_per_song",
                 "Average Lines per Song",
                 "Lines",
@@ -157,7 +197,7 @@ elif page == "Lyrical Style":
             st.plotly_chart(fig, use_container_width=True)
 
         fig = create_metrics_scatter(
-            album_df,
+            selected_album_df,
             "avg_reading_time",
             "Average Reading Time per Song",
             "Minutes",
@@ -170,7 +210,7 @@ elif page == "Lyrical Style":
 
         with col1:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "vocabulary_size",
                 "Vocabulary Size",
                 "words",
@@ -183,7 +223,7 @@ elif page == "Lyrical Style":
 
         with col2:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "lexical_diversity",
                 "Lexical Diversity",
                 "score",
@@ -195,7 +235,7 @@ elif page == "Lyrical Style":
             )
 
         fig = create_metrics_scatter(
-            album_df,
+            selected_album_df,
             "average_word_length",
             "Word Length",
             "characters",
@@ -208,7 +248,7 @@ elif page == "Lyrical Style":
 
         with col1:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "flesch_reading_ease",
                 "Flesch Reading Ease",
                 "score",
@@ -222,7 +262,7 @@ elif page == "Lyrical Style":
 
         with col2:
             fig = create_metrics_scatter(
-                album_df,
+                selected_album_df,
                 "flesch_kincaid",
                 "Flesch-Kincaid",
                 "score",
@@ -234,7 +274,7 @@ elif page == "Lyrical Style":
             )
 
         fig = create_metrics_scatter(
-            album_df,
+            selected_album_df,
             "gunning_fog",
             "Gunning Fog",
             "score",
@@ -247,7 +287,7 @@ elif page == "Lyrical Style":
 
     if selected_group == "Sentiment and Emotion":
 
-        fig = create_sentiment_scatter(album_df)
+        fig = create_sentiment_scatter(selected_album_df)
         st.plotly_chart(fig, use_container_width=True)
         st.caption(
             "Larger values indicates positive language, with 0 being 0 positive "
@@ -260,10 +300,19 @@ elif page == "Album Comparison":
     st.title("Album Comparison")
 
     st.write(
-        "Compare lyrical characteristics across Lana Del Rey's Albums."
+        "Compare lyrical characteristics across albums."
     )
 
     st.subheader("Select Albums to Compare")
+
+    # Get unique artists
+    artist_names = (
+        album_df["artist"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
 
     album_names = (
         album_df["album"]
@@ -276,17 +325,51 @@ elif page == "Album Comparison":
     col1, col2 = st.columns(2)
 
     with col1:
+        artist_1 = st.selectbox(
+            "Artist 1",
+            artist_names,
+            index=0
+        )
+
+        album_names_1 = (
+            album_df.loc[
+                album_df["artist"] == artist_1,
+                "album"
+            ]
+            .dropna()
+            .astype(str)
+            .unique()
+            .tolist()
+        )
+
         album_1 = st.selectbox(
             "Album 1",
-            album_names,
-            index=1
+            album_names_1,
+            index=0
         )
 
     with col2:
+        artist_2 = st.selectbox(
+            "Artist 2",
+            artist_names,
+            index=1
+        )
+
+        album_names_2 = (
+            album_df.loc[
+                album_df["artist"] == artist_2,
+                "album"
+            ]
+            .dropna()
+            .astype(str)
+            .unique()
+            .tolist()
+        )
+
         album_2 = st.selectbox(
             "Album 2",
-            album_names,
-            index=4
+            album_names_2,
+            index=0
         )
 
     selected_group = st.selectbox(
@@ -295,13 +378,29 @@ elif page == "Album Comparison":
     )
 
     comparison_df = album_df[
-        album_df["album"].isin([album_1, album_2])
-    ].copy()
+        (
+                (album_df["artist"] == artist_1)
+                & (album_df["album"] == album_1)
+        )
+        |
+        (
+                (album_df["artist"] == artist_2)
+                & (album_df["album"] == album_2)
+        )
+        ].copy()
 
     # Song level df for box plots
     comparison_songs = song_df[
-        song_df["album"].isin([album_1, album_2])
-    ].copy()
+        (
+                (song_df["artist"] == artist_1)
+                & (song_df["album"] == album_1)
+        )
+        |
+        (
+                (song_df["artist"] == artist_2)
+                & (song_df["album"] == album_2)
+        )
+        ].copy()
 
     if selected_group == "Song Structure":
         # Table for structural comparison
@@ -502,20 +601,38 @@ elif page == "Song Explorer":
         "characteristics of individual songs."
     )
 
-    # Drop down to choose album
-    albums = sorted(
-        song_df["album"].dropna().unique()
+    # Artist selector
+    artists = sorted(
+        song_df["artist"]
+        .dropna()
+        .unique()
+    )
+
+    selected_artist = st.selectbox(
+        "Choose an artist.",
+        artists
+    )
+
+    # Album selector
+    artist_albums = sorted(
+        song_df.loc[
+            song_df["artist"] == selected_artist,
+            "album"
+        ]
+        .dropna()
+        .unique()
     )
 
     selected_album = st.selectbox(
         "Choose an album.",
-        albums
+        artist_albums
     )
 
-    # Drop down to select song
+    # Song selector
     album_songs = (
         song_df[
-            song_df["album"] == selected_album
+            (song_df["artist"] == selected_artist)
+            & (song_df["album"] == selected_album)
         ]
         .sort_values("song")
     )
@@ -575,12 +692,15 @@ elif page == "Song Explorer":
     )
 
     fig = create_emotion_bar_chart(emotion_data)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
 
+    # Lyrics and Word Cloud
     col1, col2 = st.columns(2)
 
     with col1:
-        # Add the lyrics
         st.subheader("Lyrics")
 
         st.text_area(
@@ -597,20 +717,17 @@ elif page == "Song Explorer":
             unsafe_allow_html=True
         )
 
-        # Filter song level dataframe
+        # Filter song-level dataframe
         song_text = prepare_wordcloud_text(
             song_df,
             "song",
             selected_song
         )
 
-        # Look up album song belongs to for word cloud color palette
-        song_album = song_df.loc[
-            song_df["song"] == selected_song,
-            "album"
-        ].iloc[0]
-
-        song_palette = album_palettes[song_album]
+        # Use selected artist and album for palette
+        song_palette = album_palettes[
+            selected_artist
+        ][selected_album]
 
         song_wordcloud = create_wordcloud(
             song_text,
