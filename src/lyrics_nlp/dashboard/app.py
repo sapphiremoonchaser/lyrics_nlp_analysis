@@ -20,7 +20,8 @@ from lyrics_nlp.dashboard.visualizations.preparation import (
 from lyrics_nlp.dashboard.visualizations.comparisons import (
     create_album_boxplot,
     create_wordcloud,
-    create_album_timeline_multi_artists
+    create_album_timeline_multi_artists,
+    create_artist_lyrical_structure_dataframe
 )
 
 from lyrics_nlp.dashboard.visualizations.trends import (
@@ -899,3 +900,17 @@ elif page == "Artist Comparison":
             use_container_width=True
         )
 
+        # Lyrical Structure metrics table
+        comparison_metrics = create_artist_lyrical_structure_dataframe(
+            song_df[
+                song_df["artist"].isin(selected_artists)
+            ]
+        )
+
+        st.subheader("Lyrical Structure Comparison")
+
+        st.dataframe(
+            comparison_metrics,
+            use_container_width=True,
+            hide_index=True
+        )

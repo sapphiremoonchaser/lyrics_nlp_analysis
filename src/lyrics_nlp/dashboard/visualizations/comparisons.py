@@ -142,3 +142,31 @@ def create_album_timeline_multi_artists(
     )
 
     return fig
+
+
+def create_artist_lyrical_structure_dataframe(
+    df: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Create a dataframe containing lyrics data for each artist.
+
+    Args:
+        df (pd.DataFrame): dataframe containing lyrics data for each artist
+
+    Returns:
+        pd.DataFrame: dataframe containing lyrics data for each artist
+    """
+    return (
+        df.groupby("artist")
+        .agg(
+            albums=("album", "nunique"),
+            songs=("song", "nunique"),
+            words_per_song=("word_count", "mean"),
+            unique_words_per_song=("unique_words", "mean"),
+            vocabulary_size_per_song=("vocabulary_size", "mean"),
+            line_count_per_song=("line_count", "mean"),
+            reading_minutes_per_song=("reading_minutes", "mean"),
+        )
+        .reset_index()
+    )
+
