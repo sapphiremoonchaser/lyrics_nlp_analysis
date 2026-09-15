@@ -26,8 +26,8 @@ from lyrics_nlp.dashboard.visualizations.comparisons import (
 
 from lyrics_nlp.dashboard.visualizations.trends import (
     average_words_scatterplot,
-    create_metrics_scatter,
-    create_sentiment_scatter,
+    create_metrics_scatterplot,
+    create_sentiment_scatterplot,
     average_reading_time_scatterplot,
     average_flesch_kincaid_scatterplot,
     average_gunning_fog_scatterplot,
@@ -37,7 +37,8 @@ from lyrics_nlp.dashboard.visualizations.trends import (
 from lyrics_nlp.dashboard.visualizations.emotions import (
     album_emotion_heatmap,
     create_emotion_heatmap,
-    create_emotion_bar_chart
+    create_emotion_bar_chart,
+    create_artist_sentiment_metrics_dataframe
 )
 
 st.set_page_config(
@@ -187,7 +188,7 @@ elif page == "Lyrical Style":
         col1, col2 = st.columns(2)
 
         with col1:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "avg_words_per_song",
                 "Average Words per Song",
@@ -197,7 +198,7 @@ elif page == "Lyrical Style":
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "avg_lines_per_song",
                 "Average Lines per Song",
@@ -206,7 +207,7 @@ elif page == "Lyrical Style":
             )
             st.plotly_chart(fig, use_container_width=True)
 
-        fig = create_metrics_scatter(
+        fig = create_metrics_scatterplot(
             selected_album_df,
             "avg_reading_time",
             "Average Reading Time per Song",
@@ -219,7 +220,7 @@ elif page == "Lyrical Style":
         col1, col2 = st.columns(2)
 
         with col1:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "vocabulary_size",
                 "Vocabulary Size",
@@ -232,7 +233,7 @@ elif page == "Lyrical Style":
             )
 
         with col2:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "lexical_diversity",
                 "Lexical Diversity",
@@ -244,7 +245,7 @@ elif page == "Lyrical Style":
                 "Higher values may indicate less repetition"
             )
 
-        fig = create_metrics_scatter(
+        fig = create_metrics_scatterplot(
             selected_album_df,
             "average_word_length",
             "Word Length",
@@ -257,7 +258,7 @@ elif page == "Lyrical Style":
         col1, col2 = st.columns(2)
 
         with col1:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "flesch_reading_ease",
                 "Flesch Reading Ease",
@@ -271,7 +272,7 @@ elif page == "Lyrical Style":
 
 
         with col2:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "flesch_kincaid",
                 "Flesch-Kincaid",
@@ -283,7 +284,7 @@ elif page == "Lyrical Style":
                 "Lower values indicate a more difficult reading level."
             )
 
-        fig = create_metrics_scatter(
+        fig = create_metrics_scatterplot(
             selected_album_df,
             "gunning_fog",
             "Gunning Fog",
@@ -297,7 +298,7 @@ elif page == "Lyrical Style":
 
     if selected_group == "Sentiment and Emotion":
 
-        fig = create_sentiment_scatter(selected_album_df)
+        fig = create_sentiment_scatterplot(selected_album_df)
         st.plotly_chart(fig, use_container_width=True)
         st.caption(
             "Larger values indicates positive language, with 0 being 0 positive "
@@ -911,6 +912,21 @@ elif page == "Artist Comparison":
 
         st.dataframe(
             comparison_metrics,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        # Sentiment and Emotional Profile Metrics
+        sentiment_metrics = create_artist_sentiment_metrics_dataframe(
+            song_df[
+                song_df["artist"].isin(selected_artists)
+            ]
+        )
+
+        st.subheader("Sentiment and Emotional Profile")
+
+        st.dataframe(
+            sentiment_metrics,
             use_container_width=True,
             hide_index=True
         )

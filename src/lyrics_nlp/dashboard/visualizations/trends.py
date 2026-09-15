@@ -221,7 +221,7 @@ def average_lexical_diversity_scatterplot(
     return fig
 
 
-def create_metrics_scatter(
+def create_metrics_scatterplot(
     df: pd.DataFrame,
     metric: str,
     title: str,
@@ -256,7 +256,7 @@ def create_metrics_scatter(
     return fig
 
 
-def create_sentiment_scatter(df: pd.DataFrame) -> Figure:
+def create_sentiment_scatterplot(df: pd.DataFrame) -> Figure:
     """
     Create a scatter plot with positive and negative word ratio.
     """
