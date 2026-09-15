@@ -790,12 +790,8 @@ elif page == "Artist Comparison":
         album_count = artist_df["album"].nunique()
         song_count = artist_df["song"].nunique()
 
-        # avg_words = artist_df["word_count"].mean()
-        # avg_reading_time = artist_df["reading_minutes"].mean()
-
         st.subheader(artist)
 
-        # col1, col2, col3, col4 = st.columns(4)
         col1, col2 = st.columns(2)
 
         with col1:
@@ -810,18 +806,6 @@ elif page == "Artist Comparison":
                 value=song_count
             )
 
-        # with col3:
-        #     st.metric(
-        #         label="Avg. Words / Song",
-        #         value=f"{avg_words:,.1f}"
-        #     )
-        #
-        # with col4:
-        #     st.metric(
-        #         label="Avg. Reading Time",
-        #         value=f"{avg_reading_time:.1f} min"
-        #     )
-
     # Only continue if artists have been selected
     if selected_artists:
 
@@ -833,25 +817,31 @@ elif page == "Artist Comparison":
             comparison_songs["year"].astype(int)
         )
 
-        # Average words over time
-        fig = average_words_over_time_scatterplot(
-            comparison_songs,
-            by="artist"
-        )
+        col1, col2 = st.columns(2)
 
-        st.plotly_chart(
-            fig,
-            use_container_width=True
-        )
+        with col1:
 
-        # Average reading time over time
-        fig = average_reading_time_over_time_scatterplot(
-            comparison_songs,
-            by="artist"
-        )
+            # Average words over time
+            fig = average_words_over_time_scatterplot(
+                comparison_songs,
+                by="artist"
+            )
 
-        st.plotly_chart(
-            fig,
-            use_container_width=True
-        )
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+
+        with col2:
+
+            # Average reading time over time
+            fig = average_reading_time_over_time_scatterplot(
+                comparison_songs,
+                by="artist"
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
 
