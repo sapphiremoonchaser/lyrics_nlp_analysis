@@ -19,7 +19,8 @@ from lyrics_nlp.dashboard.visualizations.preparation import (
 
 from lyrics_nlp.dashboard.visualizations.comparisons import (
     create_album_boxplot,
-    create_wordcloud
+    create_wordcloud,
+    create_album_timeline_multi_artists
 )
 
 from lyrics_nlp.dashboard.visualizations.trends import (
@@ -747,4 +748,74 @@ elif page == "Artist Comparison":
     st.write(
         "Compare lyrical characteristics and catalog size across artists."
     )
+
+    artists = sorted(
+        song_df["artist"].dropna().unique()
+    )
+
+    selected_artists = st.multiselect(
+        "Choose artists",
+        options=artists,
+        default=artists
+    )
+
+    comparison_albums = album_df[
+        album_df["artist"].isin(selected_artists)
+    ].copy()
+
+    # Make sure year is numeric
+    comparison_albums["year"] = (
+        comparison_albums["year"].astype(int)
+    )
+
+    st.plotly_chart(
+        create_album_timeline_multi_artists(comparison_albums),
+        use_container_width=True
+    )
+
+    st.subheader(
+        "Artist Catalog"
+    )
+
+    for artist in artists:
+
+        artist_df = song_df[
+            song_df["artist"] == artist
+        ]
+
+        album_count = artist_df["album"].nunique()
+        song_count = artist_df["song"].nunique()
+
+        avg_words = artist_df["word_count"].mean()
+        avg_reading_time = artist_df["reading_minutes"].mean()
+
+        st.subheader(artist)
+
+        col1, col2, col3, col4 = st.columns(4)
+
+        with col1:
+            st.metric(
+                label="Albums",
+                value=album_count
+            )
+
+        with col2:
+            st.metric(
+                label="Songs",
+                value=song_count
+            )
+
+        with col3:
+            st.metric(
+                label="Avg. Words / Song",
+                value=f"{avg_words:,.1f}"
+            )
+
+        with col4:
+            st.metric(
+                label="Avg. Reading Time",
+                value=f"{avg_reading_time:.1f} min"
+            )
+
+
 

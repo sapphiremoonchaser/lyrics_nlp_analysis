@@ -116,3 +116,29 @@ def create_wordcloud(
         color_func=color_func,
         random_state=42
     ).generate(text)
+
+
+def create_album_timeline_multi_artists(
+    df: pd.DataFrame
+) -> Figure:
+    """
+    Create a timeline for album release years for multiple artists.
+    :param df: dataframe with multiple artists
+    :return: timeline graphic
+    """
+    fig = px.scatter(
+        df,
+        x="year",
+        y="artist",
+        color="artist",
+        hover_name="album",
+        title="Album Release Timeline"
+    )
+
+    fig.update_layout(
+        xaxis_title="Album Release Year",
+        yaxis_title="Artist",
+        showlegend=False
+    )
+
+    return fig
