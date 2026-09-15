@@ -3,28 +3,42 @@ import plotly.express as px
 from plotly.graph_objs import Figure
 
 from lyrics_nlp.dashboard.visualizations.preparation import (
-    prepare_words_by_album
+    prepare_words_by_album,
+    prepare_words_by_artist
 )
 
-def average_words_over_time_scatterplot(df: pd.DataFrame) -> Figure:
+def average_words_over_time_scatterplot(
+        df: pd.DataFrame,
+        by: str
+) -> Figure:
     """
     Create a scatter plot to show average words over time by album.
     Args:
         df: dataframe containing album and word count
+        by: what to group by ("artist" or "album")
 
     Returns:
         plotly scatter plot with avg word over time
     """
-    df = prepare_words_by_album(df)
+    if by == "album":
+        df = prepare_words_by_album(df)
+
+    elif by == "artist":
+        df = prepare_words_by_artist(df)
+
+    else:
+       raise ValueError("Invalid value for by")
 
     fig = px.scatter(
         df,
         x="year",
         y="avg_words_per_song",
+        color="artist" if by == "artist" else None,
         hover_name="album",
         labels={
             "year": "Year",
-            "avg_words_per_song": "Average Words per Song"
+            "avg_words_per_song": "Average Words per Song",
+            "artist": "Artist"
         },
         title="Average Words per Song over Time"
     )
