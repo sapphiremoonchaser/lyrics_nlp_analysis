@@ -5,7 +5,10 @@ from plotly.graph_objs import Figure
 from lyrics_nlp.dashboard.visualizations.preparation import (
     prepare_words_by_album,
     prepare_words_by_artist,
-    prepare_reading_time_by_artist
+    prepare_reading_time_by_artist,
+    prepare_flesch_reading_ease_by_artist,
+    prepare_flesch_kincaid_by_artist,
+    prepare_gunning_fog_by_artist
 )
 
 def average_words_over_time_scatterplot(
@@ -89,6 +92,102 @@ def average_reading_time_over_time_scatterplot(
     )
 
     return fig
+
+
+def average_flesch_reading_ease_over_time_scatterplot(
+    df: pd.DataFrame
+) -> Figure:
+    """
+    Create a scatter plot to show flesch reading ease score over time.
+
+    Args:
+        df: dataframe containing album/artist and flesch reading ease score
+        by: what to group by ("artist" or "album")
+
+    Returns:
+        plotly scatter plot flesch reading ease score over time
+    """
+    df = prepare_flesch_reading_ease_by_artist(df)
+
+    fig = px.scatter(
+        df,
+        x="year",
+        y="avg_flesch_reading_ease",
+        color="artist",
+        hover_name="artist",
+        labels={
+            "year": "Year",
+            "avg_flesch_reading_ease": "Flesch Reading Ease",
+            "artist": "Artist"
+        },
+        title="Flesch Reading Ease over Time"
+    )
+
+    return fig
+
+
+def average_flesch_kincaid_over_time_scatterplot(
+    df: pd.DataFrame
+) -> Figure:
+    """
+    Create a scatter plot showing average Flesch-Kincaid
+    grade level over time.
+
+    Args:
+        df: dataframe containing artist and flesch kincaid reading ease score
+
+    Returns:
+        plotly scatter plot flesch kincaid grade level over time
+    """
+    df = prepare_flesch_kincaid_by_artist(df)
+
+    fig = px.scatter(
+        df,
+        x="year",
+        y="avg_flesch_kincaid",
+        color="artist",
+        hover_name="artist",
+        labels={
+            "year": "Year",
+            "avg_flesch_kincaid": "Average Grade Level",
+            "artist": "Artist"
+        },
+        title="Average Flesch-Kincaid Grade Level over Time"
+    )
+
+    return fig
+
+
+def average_gunning_fog_over_time_scatterplot(
+    df: pd.DataFrame
+) -> Figure:
+    """
+    Create a scatter plot showing average Gunning Fog scores over time.
+
+    Args:
+        df: dataframe containing artist and gunning fog score
+
+    Returns:
+        plotly scatter plot gunning fog score over time
+    """
+    df = prepare_gunning_fog_by_artist(df)
+
+    fig = px.scatter(
+        df,
+        x="year",
+        y="avg_gunning_fog",
+        color="artist",
+        hover_name="artist",
+        labels={
+            "year": "Year",
+            "avg_gunning_fog": "Average Gunning Fog",
+            "artist": "Artist"
+        },
+        title="Average Gunning Fog Score over Time"
+    )
+
+    return fig
+
 
 def create_metrics_scatter(
     df: pd.DataFrame,

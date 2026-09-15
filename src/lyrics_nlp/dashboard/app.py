@@ -27,7 +27,9 @@ from lyrics_nlp.dashboard.visualizations.trends import (
     average_words_over_time_scatterplot,
     create_metrics_scatter,
     create_sentiment_scatter,
-    average_reading_time_over_time_scatterplot
+    average_reading_time_over_time_scatterplot,
+    average_flesch_kincaid_over_time_scatterplot,
+    average_gunning_fog_over_time_scatterplot
 )
 
 from lyrics_nlp.dashboard.visualizations.emotions import (
@@ -781,6 +783,7 @@ elif page == "Artist Comparison":
         "Artist Catalog"
     )
 
+    # Catalog KPI cards
     for artist in artists:
 
         artist_df = song_df[
@@ -819,6 +822,7 @@ elif page == "Artist Comparison":
 
         col1, col2 = st.columns(2)
 
+        # Average words per song scatterplot
         with col1:
 
             # Average words over time
@@ -832,6 +836,7 @@ elif page == "Artist Comparison":
                 use_container_width=True
             )
 
+        # Average Reading Time scatterplot
         with col2:
 
             # Average reading time over time
@@ -844,4 +849,44 @@ elif page == "Artist Comparison":
                 fig,
                 use_container_width=True
             )
+
+        col1, col2 = st.columns(2)
+
+        # Flesch Kincaid Score scatterplot
+        with col1:
+
+            fig = average_flesch_kincaid_over_time_scatterplot(
+                comparison_songs
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+
+            st.caption(
+                "Higher Flesch-Kincaid scores indicate higher estimated reading-level "
+                "complexity. Scores are better used to compare patterns across artists "
+                "rather than as an absolute measure of lyrical quality."
+            )
+
+        # Gunning Fog Score Scatterplot
+        with col2:
+
+            fig = average_gunning_fog_over_time_scatterplot(
+                comparison_songs
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+
+            st.caption(
+                "Gunning Fog Index estimates the years of formal education needed to "
+                "understand the text. Higher scores indicate greater reading "
+                "complexity."
+            )
+
+
 

@@ -264,3 +264,45 @@ def prepare_reading_time_by_artist(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def prepare_flesch_reading_ease_by_artist(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calcualte average fleschh reading ease for each artist and year.
+
+    Args:
+        df: dataframe containing artist, year, and flesch_reading_ease
+
+    Returns:
+        DataFrame containing artist, year, and average flesch reading easy fore each
+        artist and album.
+    """
+    return (
+        df.groupby(["artist", "year"])["flesch_reading_ease"]
+        .mean()
+        .reset_index(name="avg_flesch_reading_ease")
+    )
+
+def prepare_flesch_kincaid_by_artist(df: pd.DataFrame) -> pd.DataFrame:
+    """Calculate average Flesch-Kincaid grade level by artist and year."""
+    return (
+        df.groupby(["artist", "year"])["flesch_kincaid"]
+        .mean()
+        .reset_index(name="avg_flesch_kincaid")
+    )
+
+
+def prepare_gunning_fog_by_artist(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate average Gunning Fog grade level by artist and year.
+
+    Args:
+         df: dataframe containing artist, year, and gunning_fog
+
+    Returns:
+        DataFrame containing artist, year, and average Gunning Fog grade level
+    """
+    return (
+        df.groupby(["artist", "year"])["gunning_fog"]
+        .mean()
+        .reset_index(name="avg_gunning_fog")
+    )
+
