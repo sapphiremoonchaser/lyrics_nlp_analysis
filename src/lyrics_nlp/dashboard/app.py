@@ -19,19 +19,26 @@ from lyrics_nlp.dashboard.visualizations.preparation import (
 
 from lyrics_nlp.dashboard.visualizations.comparisons import (
     create_album_boxplot,
-    create_wordcloud
+    create_wordcloud,
+    create_album_timeline_multi_artists,
+    create_artist_lyrical_structure_dataframe
 )
 
 from lyrics_nlp.dashboard.visualizations.trends import (
-    average_words_over_time_scatterplot,
-    create_metrics_scatter,
-    create_sentiment_scatter
+    average_words_scatterplot,
+    create_metrics_scatterplot,
+    create_sentiment_scatterplot,
+    average_reading_time_scatterplot,
+    average_flesch_kincaid_scatterplot,
+    average_gunning_fog_scatterplot,
+    average_lexical_diversity_scatterplot
 )
 
 from lyrics_nlp.dashboard.visualizations.emotions import (
     album_emotion_heatmap,
     create_emotion_heatmap,
-    create_emotion_bar_chart
+    create_emotion_bar_chart,
+    create_artist_sentiment_metrics_dataframe
 )
 
 st.set_page_config(
@@ -65,7 +72,8 @@ page = st.sidebar.radio(
         "Overview",
         "Lyrical Style",
         "Album Comparison",
-        "Song Explorer"
+        "Song Explorer",
+        "Artist Comparison"
     ]
 )
 
@@ -124,7 +132,10 @@ if page == "Overview":
         st.metric("Latest Album", last_year)
 
     # Scatter Plot
-    fig = average_words_over_time_scatterplot(selected_album_df)
+    fig = average_words_scatterplot(
+        selected_album_df,
+        "album"
+    )
     st.plotly_chart(fig, use_container_width=True)
 
     st.caption(
@@ -177,7 +188,7 @@ elif page == "Lyrical Style":
         col1, col2 = st.columns(2)
 
         with col1:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "avg_words_per_song",
                 "Average Words per Song",
@@ -187,7 +198,7 @@ elif page == "Lyrical Style":
             st.plotly_chart(fig, use_container_width=True)
 
         with col2:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "avg_lines_per_song",
                 "Average Lines per Song",
@@ -196,7 +207,7 @@ elif page == "Lyrical Style":
             )
             st.plotly_chart(fig, use_container_width=True)
 
-        fig = create_metrics_scatter(
+        fig = create_metrics_scatterplot(
             selected_album_df,
             "avg_reading_time",
             "Average Reading Time per Song",
@@ -209,7 +220,7 @@ elif page == "Lyrical Style":
         col1, col2 = st.columns(2)
 
         with col1:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "vocabulary_size",
                 "Vocabulary Size",
@@ -222,7 +233,7 @@ elif page == "Lyrical Style":
             )
 
         with col2:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "lexical_diversity",
                 "Lexical Diversity",
@@ -234,7 +245,7 @@ elif page == "Lyrical Style":
                 "Higher values may indicate less repetition"
             )
 
-        fig = create_metrics_scatter(
+        fig = create_metrics_scatterplot(
             selected_album_df,
             "average_word_length",
             "Word Length",
@@ -247,7 +258,7 @@ elif page == "Lyrical Style":
         col1, col2 = st.columns(2)
 
         with col1:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "flesch_reading_ease",
                 "Flesch Reading Ease",
@@ -261,7 +272,7 @@ elif page == "Lyrical Style":
 
 
         with col2:
-            fig = create_metrics_scatter(
+            fig = create_metrics_scatterplot(
                 selected_album_df,
                 "flesch_kincaid",
                 "Flesch-Kincaid",
@@ -273,7 +284,7 @@ elif page == "Lyrical Style":
                 "Lower values indicate a more difficult reading level."
             )
 
-        fig = create_metrics_scatter(
+        fig = create_metrics_scatterplot(
             selected_album_df,
             "gunning_fog",
             "Gunning Fog",
@@ -287,7 +298,7 @@ elif page == "Lyrical Style":
 
     if selected_group == "Sentiment and Emotion":
 
-        fig = create_sentiment_scatter(selected_album_df)
+        fig = create_sentiment_scatterplot(selected_album_df)
         st.plotly_chart(fig, use_container_width=True)
         st.caption(
             "Larger values indicates positive language, with 0 being 0 positive "
@@ -737,4 +748,185 @@ elif page == "Song Explorer":
         st.image(
             song_wordcloud.to_array(),
             use_container_width=True
+        )
+
+
+elif page == "Artist Comparison":
+    st.title("Artist Comparison")
+
+    st.write(
+        "Compare lyrical characteristics and catalog size across artists."
+    )
+
+    artists = sorted(
+        song_df["artist"].dropna().unique()
+    )
+
+    selected_artists = st.multiselect(
+        "Choose artists",
+        options=artists,
+        default=artists
+    )
+
+    comparison_albums = album_df[
+        album_df["artist"].isin(selected_artists)
+    ].copy()
+
+    # Make sure year is numeric
+    comparison_albums["year"] = (
+        comparison_albums["year"].astype(int)
+    )
+
+    st.plotly_chart(
+        create_album_timeline_multi_artists(comparison_albums),
+        use_container_width=True
+    )
+
+    st.subheader(
+        "Artist Catalog"
+    )
+
+    # Catalog KPI cards
+    for artist in artists:
+
+        artist_df = song_df[
+            song_df["artist"] == artist
+        ]
+
+        album_count = artist_df["album"].nunique()
+        song_count = artist_df["song"].nunique()
+
+        st.subheader(artist)
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(
+                label="Albums",
+                value=album_count
+            )
+
+        with col2:
+            st.metric(
+                label="Songs",
+                value=song_count
+            )
+
+    # Only continue if artists have been selected
+    if selected_artists:
+
+        comparison_songs = song_df[
+            song_df["artist"].isin(selected_artists)
+        ].copy()
+
+        comparison_songs["year"] = (
+            comparison_songs["year"].astype(int)
+        )
+
+        col1, col2 = st.columns(2)
+
+        # Average words per song scatterplot
+        with col1:
+
+            # Average words over time
+            fig = average_words_scatterplot(
+                comparison_songs,
+                by="artist"
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+
+        # Average Reading Time scatterplot
+        with col2:
+
+            # Average reading time over time
+            fig = average_reading_time_scatterplot(
+                comparison_songs,
+                by="artist"
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+
+        col1, col2 = st.columns(2)
+
+        # Flesch Kincaid Score scatterplot
+        with col1:
+
+            fig = average_flesch_kincaid_scatterplot(
+                comparison_songs
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+
+            st.caption(
+                "Higher Flesch-Kincaid scores indicate higher estimated reading-level "
+                "complexity. Scores are better used to compare patterns across artists "
+                "rather than as an absolute measure of lyrical quality."
+            )
+
+        # Gunning Fog Score Scatter plot
+        with col2:
+
+            fig = average_gunning_fog_scatterplot(
+                comparison_songs
+            )
+
+            st.plotly_chart(
+                fig,
+                use_container_width=True
+            )
+
+            st.caption(
+                "Gunning Fog Index estimates the years of formal education needed to "
+                "understand the text. Higher scores indicate greater reading "
+                "complexity."
+            )
+
+        # Lyrical Diversity Scatter plot
+        fig = average_lexical_diversity_scatterplot(
+            comparison_songs
+        )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
+
+        # Lyrical Structure metrics table
+        comparison_metrics = create_artist_lyrical_structure_dataframe(
+            song_df[
+                song_df["artist"].isin(selected_artists)
+            ]
+        )
+
+        st.subheader("Lyrical Structure Comparison")
+
+        st.dataframe(
+            comparison_metrics,
+            use_container_width=True,
+            hide_index=True
+        )
+
+        # Sentiment and Emotional Profile Metrics
+        sentiment_metrics = create_artist_sentiment_metrics_dataframe(
+            song_df[
+                song_df["artist"].isin(selected_artists)
+            ]
+        )
+
+        st.subheader("Sentiment and Emotional Profile")
+
+        st.dataframe(
+            sentiment_metrics,
+            use_container_width=True,
+            hide_index=True
         )

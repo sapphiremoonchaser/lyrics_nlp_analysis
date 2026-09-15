@@ -117,3 +117,36 @@ def create_emotion_bar_chart(emotion_data):
     )
 
     return fig
+
+
+def create_artist_sentiment_metrics_dataframe(
+        df: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Create a dataframe containing artist sentiment metrics and emotional profile.
+
+    Args:
+        df (pd.DataFrame): dataframe containing sentiment and emotional profile data
+        for each artist
+
+    Returns:
+        pd.DataFrame: dataframe containing artist sentiment and emotional profile data
+    """
+    return (
+        df.groupby("artist")
+        .agg(
+            sentiment_polarity=("sentiment_polarity", "mean"),
+            subjectivity=("subjectivity", "mean"),
+            positivity=("emotion_Positive", "mean"),
+            negativity=("emotion_Negative", "mean"),
+            anger=("emotion_Anger", "mean"),
+            anticipation=("emotion_Anticipation", "mean"),
+            disgust=("emotion_Disgust", "mean"),
+            fear=("emotion_Fear", "mean"),
+            joy=("emotion_Joy", "mean"),
+            sadness=("emotion_Sadness", "mean"),
+            surprise=("emotion_Surprise", "mean"),
+            trust=("emotion_Trust", "mean")
+        )
+        .reset_index()
+    )
