@@ -4,17 +4,18 @@ from plotly.graph_objs import Figure
 
 from lyrics_nlp.dashboard.visualizations.preparation import (
     prepare_words_by_album,
-    prepare_words_by_artist
+    prepare_words_by_artist,
+    prepare_reading_time_by_artist
 )
 
 def average_words_over_time_scatterplot(
-        df: pd.DataFrame,
-        by: str
+    df: pd.DataFrame,
+    by: str
 ) -> Figure:
     """
     Create a scatter plot to show average words over time by album.
     Args:
-        df: dataframe containing album and word count
+        df: dataframe containing album/artist and word count
         by: what to group by ("artist" or "album")
 
     Returns:
@@ -43,6 +44,48 @@ def average_words_over_time_scatterplot(
             "artist": "Artist"
         },
         title="Average Words per Song over Time"
+    )
+
+    return fig
+
+
+def average_reading_time_over_time_scatterplot(
+    df: pd.DataFrame,
+    by: str
+) -> Figure:
+    """
+    Create a scatter plot to show average reading time by year.
+
+    Args:
+        df: dataframe containing album/artist and reading time
+        by: what to group by ("artist" or "album")
+
+    Returns:
+        plotly scatter plot with avg reading time over time
+    """
+    if by == "album":
+        df = prepare_reading_time_by_artist(df)
+        hover_column = "album"
+
+    elif by == "artist":
+        df = prepare_reading_time_by_artist(df)
+        hover_column = "artist"
+
+    else:
+       raise ValueError("Invalid value for by")
+
+    fig = px.scatter(
+        df,
+        x="year",
+        y="avg_reading_time",
+        color="artist" if by == "artist" else None,
+        hover_name=hover_column,
+        labels={
+            "year": "Year",
+            "avg_reading_time": "Average Reading Time",
+            "artist": "Artist"
+        },
+        title="Average Reading Time over Time"
     )
 
     return fig

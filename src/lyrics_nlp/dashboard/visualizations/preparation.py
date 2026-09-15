@@ -247,12 +247,20 @@ def prepare_words_by_artist(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def prepare_reading_time_by_artist(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate average reading time for each artist and year.
 
+    Args:
+        df: dataframe containing artist, year, and reading_minutes
 
-
-
-
-
-
+    :return:
+        Dataframe containing artist, year, and average reading time for each artist.
+    """
+    return (
+        df.groupby(["artist", "year"])["reading_minutes"]
+        .mean()
+        .reset_index(name="avg_reading_time")
+    )
 
 
