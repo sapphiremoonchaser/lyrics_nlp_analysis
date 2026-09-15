@@ -821,5 +821,25 @@ elif page == "Artist Comparison":
         #         value=f"{avg_reading_time:.1f} min"
         #     )
 
+    # Only continue if artists have been selected
+    if selected_artists:
 
+        comparison_songs = song_df[
+            song_df["artist"].isin(selected_artists)
+        ].copy()
+
+        comparison_songs["year"] = (
+            comparison_songs["year"].astype(int)
+        )
+
+        # Average words over time
+        fig = average_words_over_time_scatterplot(
+            comparison_songs,
+            by="artist"
+        )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 

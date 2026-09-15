@@ -22,9 +22,11 @@ def average_words_over_time_scatterplot(
     """
     if by == "album":
         df = prepare_words_by_album(df)
+        hover_column = "album"
 
     elif by == "artist":
         df = prepare_words_by_artist(df)
+        hover_column = "artist"
 
     else:
        raise ValueError("Invalid value for by")
@@ -34,7 +36,7 @@ def average_words_over_time_scatterplot(
         x="year",
         y="avg_words_per_song",
         color="artist" if by == "artist" else None,
-        hover_name="album",
+        hover_name=hover_column,
         labels={
             "year": "Year",
             "avg_words_per_song": "Average Words per Song",

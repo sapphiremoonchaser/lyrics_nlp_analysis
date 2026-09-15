@@ -230,16 +230,20 @@ def prepare_wordcloud_text(
     )
 
 
-def prepare_words_by_artist(
-    df: pd.DataFrame
-) -> pd.DataFrame:
-    """Calculate average words per song by artist and year."""
+def prepare_words_by_artist(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate average words per song by artist and year.
+
+    Args:
+        df: dataframe containing artist, year, and word count.
+
+    Returns:
+        Dataframe containing artist, year, and average words per song.
+    """
     return (
-        df
-        .groupby(["artist", "year"], as_index=False)
-        ["word_count"]
+        df.groupby(["artist", "year"])["word_count"]
         .mean()
-        .rename(columns={"word_count": "avg_words_per_song"})
+        .reset_index(name="avg_words_per_song")
     )
 
 
