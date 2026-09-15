@@ -29,7 +29,8 @@ from lyrics_nlp.dashboard.visualizations.trends import (
     create_sentiment_scatter,
     average_reading_time_over_time_scatterplot,
     average_flesch_kincaid_over_time_scatterplot,
-    average_gunning_fog_over_time_scatterplot
+    average_gunning_fog_over_time_scatterplot,
+    average_lexical_diversity_over_time_scatterplot
 )
 
 from lyrics_nlp.dashboard.visualizations.emotions import (
@@ -870,7 +871,7 @@ elif page == "Artist Comparison":
                 "rather than as an absolute measure of lyrical quality."
             )
 
-        # Gunning Fog Score Scatterplot
+        # Gunning Fog Score Scatter plot
         with col2:
 
             fig = average_gunning_fog_over_time_scatterplot(
@@ -888,5 +889,13 @@ elif page == "Artist Comparison":
                 "complexity."
             )
 
+        # Lyrical Diversity Scatter plot
+        fig = average_lexical_diversity_over_time_scatterplot(
+            comparison_songs
+        )
 
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 

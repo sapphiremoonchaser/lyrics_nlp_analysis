@@ -306,3 +306,18 @@ def prepare_gunning_fog_by_artist(df: pd.DataFrame) -> pd.DataFrame:
         .reset_index(name="avg_gunning_fog")
     )
 
+def prepare_lexical_diversity_by_artist(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate average lexical diversity by artist and year.
+
+    Args:
+        df: dataframe containing artist, year, and lexical diversity
+
+    Returns:
+        DataFrame containing artist, year, and average lexical diversity.
+    """
+    return (
+        df.groupby(["artist", "year"])["lexical_diversity"]
+        .mean()
+        .reset_index(name="avg_lexical_diversity")
+    )

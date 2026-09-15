@@ -8,7 +8,8 @@ from lyrics_nlp.dashboard.visualizations.preparation import (
     prepare_reading_time_by_artist,
     prepare_flesch_reading_ease_by_artist,
     prepare_flesch_kincaid_by_artist,
-    prepare_gunning_fog_by_artist
+    prepare_gunning_fog_by_artist,
+    prepare_lexical_diversity_by_artist
 )
 
 def average_words_over_time_scatterplot(
@@ -46,7 +47,7 @@ def average_words_over_time_scatterplot(
             "avg_words_per_song": "Average Words per Song",
             "artist": "Artist"
         },
-        title="Average Words per Song over Time"
+        title="Average Words per Song Over Time"
     )
 
     return fig
@@ -88,7 +89,7 @@ def average_reading_time_over_time_scatterplot(
             "avg_reading_time": "Average Reading Time",
             "artist": "Artist"
         },
-        title="Average Reading Time over Time"
+        title="Average Reading Time Over Time"
     )
 
     return fig
@@ -120,7 +121,7 @@ def average_flesch_reading_ease_over_time_scatterplot(
             "avg_flesch_reading_ease": "Flesch Reading Ease",
             "artist": "Artist"
         },
-        title="Flesch Reading Ease over Time"
+        title="Flesch Reading Ease Over Time"
     )
 
     return fig
@@ -152,7 +153,7 @@ def average_flesch_kincaid_over_time_scatterplot(
             "avg_flesch_kincaid": "Average Grade Level",
             "artist": "Artist"
         },
-        title="Average Flesch-Kincaid Grade Level over Time"
+        title="Average Flesch-Kincaid Grade Level Over Time"
     )
 
     return fig
@@ -184,6 +185,37 @@ def average_gunning_fog_over_time_scatterplot(
             "artist": "Artist"
         },
         title="Average Gunning Fog Score over Time"
+    )
+
+    return fig
+
+
+def average_lexical_diversity_over_time_scatterplot(
+    df: pd.DataFrame
+) -> Figure:
+    """
+    Create a scatterplot showing lexical diversity over time.
+
+    Args:
+        df: dataframe containing artist and lexical diversity
+
+    Returns:
+        plotly scatter plot lexical diversity over time
+    """
+    df = prepare_lexical_diversity_by_artist(df)
+
+    fig = px.scatter(
+        df,
+        x="year",
+        y="avg_lexical_diversity",
+        color="artist",
+        hover_name="artist",
+        labels={
+            "year": "Year",
+            "avg_lexical_diversity": "Average Lexical Diversity",
+            "artist": "Artist"
+        },
+        title="Average Lexical Diversity Over Time"
     )
 
     return fig
