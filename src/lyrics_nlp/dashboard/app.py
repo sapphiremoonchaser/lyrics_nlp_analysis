@@ -25,13 +25,13 @@ from lyrics_nlp.dashboard.visualizations.comparisons import (
 )
 
 from lyrics_nlp.dashboard.visualizations.trends import (
-    average_words_over_time_scatterplot,
+    average_words_scatterplot,
     create_metrics_scatter,
     create_sentiment_scatter,
-    average_reading_time_over_time_scatterplot,
-    average_flesch_kincaid_over_time_scatterplot,
-    average_gunning_fog_over_time_scatterplot,
-    average_lexical_diversity_over_time_scatterplot
+    average_reading_time_scatterplot,
+    average_flesch_kincaid_scatterplot,
+    average_gunning_fog_scatterplot,
+    average_lexical_diversity_scatterplot
 )
 
 from lyrics_nlp.dashboard.visualizations.emotions import (
@@ -131,7 +131,7 @@ if page == "Overview":
         st.metric("Latest Album", last_year)
 
     # Scatter Plot
-    fig = average_words_over_time_scatterplot(
+    fig = average_words_scatterplot(
         selected_album_df,
         "album"
     )
@@ -828,7 +828,7 @@ elif page == "Artist Comparison":
         with col1:
 
             # Average words over time
-            fig = average_words_over_time_scatterplot(
+            fig = average_words_scatterplot(
                 comparison_songs,
                 by="artist"
             )
@@ -842,7 +842,7 @@ elif page == "Artist Comparison":
         with col2:
 
             # Average reading time over time
-            fig = average_reading_time_over_time_scatterplot(
+            fig = average_reading_time_scatterplot(
                 comparison_songs,
                 by="artist"
             )
@@ -857,7 +857,7 @@ elif page == "Artist Comparison":
         # Flesch Kincaid Score scatterplot
         with col1:
 
-            fig = average_flesch_kincaid_over_time_scatterplot(
+            fig = average_flesch_kincaid_scatterplot(
                 comparison_songs
             )
 
@@ -875,7 +875,7 @@ elif page == "Artist Comparison":
         # Gunning Fog Score Scatter plot
         with col2:
 
-            fig = average_gunning_fog_over_time_scatterplot(
+            fig = average_gunning_fog_scatterplot(
                 comparison_songs
             )
 
@@ -891,7 +891,7 @@ elif page == "Artist Comparison":
             )
 
         # Lyrical Diversity Scatter plot
-        fig = average_lexical_diversity_over_time_scatterplot(
+        fig = average_lexical_diversity_scatterplot(
             comparison_songs
         )
 

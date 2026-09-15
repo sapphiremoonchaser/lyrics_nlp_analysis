@@ -12,7 +12,7 @@ from lyrics_nlp.dashboard.visualizations.preparation import (
     prepare_lexical_diversity_by_artist
 )
 
-def average_words_over_time_scatterplot(
+def average_words_scatterplot(
     df: pd.DataFrame,
     by: str
 ) -> Figure:
@@ -53,7 +53,7 @@ def average_words_over_time_scatterplot(
     return fig
 
 
-def average_reading_time_over_time_scatterplot(
+def average_reading_time_scatterplot(
     df: pd.DataFrame,
     by: str
 ) -> Figure:
@@ -95,7 +95,7 @@ def average_reading_time_over_time_scatterplot(
     return fig
 
 
-def average_flesch_reading_ease_over_time_scatterplot(
+def average_flesch_reading_ease_scatterplot(
     df: pd.DataFrame
 ) -> Figure:
     """
@@ -127,7 +127,7 @@ def average_flesch_reading_ease_over_time_scatterplot(
     return fig
 
 
-def average_flesch_kincaid_over_time_scatterplot(
+def average_flesch_kincaid_scatterplot(
     df: pd.DataFrame
 ) -> Figure:
     """
@@ -159,7 +159,7 @@ def average_flesch_kincaid_over_time_scatterplot(
     return fig
 
 
-def average_gunning_fog_over_time_scatterplot(
+def average_gunning_fog_scatterplot(
     df: pd.DataFrame
 ) -> Figure:
     """
@@ -190,7 +190,7 @@ def average_gunning_fog_over_time_scatterplot(
     return fig
 
 
-def average_lexical_diversity_over_time_scatterplot(
+def average_lexical_diversity_scatterplot(
     df: pd.DataFrame
 ) -> Figure:
     """
